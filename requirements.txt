@@ -1,0 +1,4 @@
+lyricsgenius
+python-dotenv
+requests
+beautifulsoup4
