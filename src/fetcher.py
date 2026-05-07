@@ -1,4 +1,5 @@
 import os
+import re
 import requests
 from dotenv import load_dotenv
 
@@ -41,4 +42,7 @@ def scrape_lyrics(url, headers):
             br.replace_with("\n")
         lyrics += container.get_text() + "\n"
     
+    lyrics = re.sub(r'^\d+\s*Contributor[s]?.*?Lyrics', '', lyrics, flags=re.DOTALL)
+    lyrics = re.sub(r'\d+\s*Embed$', '', lyrics.strip())
+
     return lyrics.strip()
