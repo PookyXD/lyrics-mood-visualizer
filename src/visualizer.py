@@ -12,7 +12,7 @@ from config import (
     SCORE_COLOR_POS, SCORE_COLOR_NEG,
     TITLE_SIZE, ARTIST_SIZE, SCORE_SIZE, QUOTE_SIZE,
     FIGURE_WIDTH, FIGURE_HEIGHT, OUTPUT_DPI,
-    LABEL_COLOR, AXIS_COLOR
+    LABEL_COLOR, AXIS_COLOR, LABEL_SIZE
 )
 
 BG       = BG_COLOR
@@ -97,7 +97,7 @@ def plot_mood_arc(song, art_path=None):
         path_effects=[pe.withStroke(linewidth=4, foreground=BG)]
     )
     ax_header.text(
-        0.22, 0.38, song.artist,
+        0.22, 0.52, song.artist,
         transform=ax_header.transAxes,
         color='#888888', fontsize=ARTIST_SIZE,
         style='italic', va='center'
@@ -231,7 +231,7 @@ def plot_mood_arc(song, art_path=None):
         "most emotional line",
         ha='center', va='center',
         transform=ax_footer.transAxes,
-        color=LABEL_COLOR, fontsize=9, style='italic'
+        color=LABEL_COLOR, fontsize=LABEL_SIZE, style='italic'
     )
     ax_footer.text(
         0.5, 0.28,

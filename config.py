@@ -29,13 +29,14 @@ SCORE_COLOR_NEG = "#FFD700"   # color when song is negative
 
 # ── Typography ──
 TITLE_SIZE      = 22          # song title font size
-ARTIST_SIZE     = 16          # artist name font size
+ARTIST_SIZE     = 20          # artist name font size
 SCORE_SIZE      = 30          # big score number font size
 QUOTE_SIZE      = 30          # quoted lyric font size
 
 # ── Labels ──
 LABEL_COLOR     = "#DEDEDE"   # color for small labels like "Lyric Lines" and "most emotional line"
 AXIS_COLOR      = "#CFCFCF"   # color for axis tick numbers
+LABEL_SIZE = 19   # size of small labels like "most emotional line"
 
 # ── Canvas ──
 FIGURE_WIDTH    = 24          # width of the output image
