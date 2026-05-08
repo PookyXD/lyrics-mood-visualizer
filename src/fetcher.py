@@ -46,3 +46,31 @@ def scrape_lyrics(url, headers):
     lyrics = re.sub(r'\d+\s*Embed$', '', lyrics.strip())
 
     return lyrics.strip()
+
+def get_album_art(song_title, artist_name):
+    token = os.getenv("GENIUS_TOKEN")
+    headers = {"Authorization": f"Bearer {token}"}
+
+    search_url = "https://api.genius.com/search"
+    params = {"q": f"{song_title} {artist_name}"}
+    
+    response = requests.get(search_url, headers=headers, params=params)
+    data = response.json()
+    
+    hits = data["response"]["hits"]
+    
+    if not hits:
+        return None
+    
+    image_url = hits[0]["result"]["song_art_image_url"]
+    
+    image_response = requests.get(image_url)
+    
+    if image_response.status_code == 200:
+        os.makedirs("assets", exist_ok=True)
+        art_path = "assets/album_art.jpg"
+        with open(art_path, "wb") as f:
+            f.write(image_response.content)
+        return art_path
+    
+    return None
