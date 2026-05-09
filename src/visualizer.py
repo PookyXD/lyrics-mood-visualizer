@@ -151,6 +151,11 @@ def plot_mood_arc(song, art_path=None):
     # MAIN — constellation
     # ════════════════════════════════
 
+    star_ax = fig.add_axes([0, 0, 1, 1])
+    star_ax.set_facecolor("none")
+    star_ax.set_zorder(0)
+    star_ax.axis("off")
+
     rng = np.random.default_rng(7)
     n   = BG_STAR_COUNT
     bsx = rng.uniform(0, 1, n)
@@ -158,9 +163,8 @@ def plot_mood_arc(song, art_path=None):
     bss = rng.uniform(0.3, BG_STAR_MAX_SIZE, n)
     bsa = rng.uniform(0.08, 0.5, n)
     for bx, by, bs, ba in zip(bsx, bsy, bss, bsa):
-        ax_main.plot(bx, by, '*', color='white',
-                     markersize=bs, alpha=ba,
-                     transform=ax_main.transAxes, zorder=1)
+        star_ax.plot(bx, by, '*', color='white',
+                 markersize=bs, alpha=ba, zorder=0)
 
     # connecting line
     ax_main.plot(x, y,

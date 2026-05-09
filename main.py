@@ -1,26 +1,40 @@
 from src.fetcher import get_lyrics, get_album_art
 from src.analyzer import analyze_lyrics, export_to_csv
 from src.visualizer import plot_mood_arc
+from src.cli import (
+    console, print_header, print_divider,
+    fetch_spinner, analyze_spinner, visual_spinner,
+    print_table, print_summary
+)
 
-song_title = input("Song title: ")
+print_header()
+print_divider()
+
+song_title  = input("Song title:  ")
 artist_name = input("Artist name: ")
 
-print(f"\nFetching lyrics for '{song_title}' by {artist_name}...\n")
+print_divider()
 
-raw_lyrics = get_lyrics(song_title, artist_name)
-art_path= get_album_art(song_title, artist_name)
+with fetch_spinner():
+    raw_lyrics, real_title, real_artist = get_lyrics(song_title, artist_name)
+    art_path = get_album_art(song_title, artist_name)
 
 if raw_lyrics is None:
-    print("Couldn't find that song. Check the spelling and try again.")
+    console.print(f"\n[red3]Couldn't find that song. Check spelling and try again.[/]")
 else:
-    print("Lyrics fetched. Analyzing mood...\n")
+    with analyze_spinner():
+        song = analyze_lyrics(real_title, real_artist, raw_lyrics)
+
+    print_divider()
+    print_table(song)
+    print_divider()
+
+    with visual_spinner():
+        export_to_csv(song)
+        plot_mood_arc(song, art_path)
     
-    song = analyze_lyrics(song_title, artist_name, raw_lyrics)
-    
-    print(f"Analysis complete — {len(song.lines)} lines analyzed.\n")
-    
-    for line in song.lines:
-        print(f"[{line.section}] {line.text[:50]} | compound: {line.compound}")
-    
-    export_to_csv(song)
-    plot_mood_arc(song, art_path)
+    print_divider()
+    print_summary(song)
+    print_divider()
+
+    print_divider()

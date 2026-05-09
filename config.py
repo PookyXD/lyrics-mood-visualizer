@@ -10,7 +10,7 @@ BG_COLOR        = "#050505"   # main background color
 STAR_COLOR      = "#FFD700"   # color of constellation stars
 STAR_MIN_SIZE   = 30          # smallest star (neutral lines)
 STAR_MAX_SIZE   = 400         # biggest star (most emotional lines)
-BG_STAR_COUNT   = 500         # how many background stars (keep under 200)
+BG_STAR_COUNT   = 1000         # how many background stars (keep under 200)
 BG_STAR_MAX_SIZE = 1.8        # max size of background stars
 
 # ── Connecting Line ──

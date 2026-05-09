@@ -19,11 +19,15 @@ def get_lyrics(song_title, artist_name):
     hits = data["response"]["hits"]
     
     if not hits:
-        return None
+        return None, None, None
     
-    song_url = hits[0]["result"]["url"]
-    
-    return scrape_lyrics(song_url, headers)
+    result      = hits[0]["result"]
+    song_url    = result["url"]
+    real_title  = result["title"]
+    real_artist = result["primary_artist"]["name"]
+
+    lyrics = scrape_lyrics(song_url, headers)
+    return lyrics, real_title, real_artist
 
 def scrape_lyrics(url, headers):
     from bs4 import BeautifulSoup
