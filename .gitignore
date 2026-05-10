@@ -2,3 +2,8 @@ venv/
 .env
 output/
 models/
+assets/album_art.jpg
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/

@@ -3,14 +3,16 @@ import csv
 import os
 from transformers import pipeline
 from src.models import LyricLine, Song
+from rich.console import Console
 
-print("Loading text-classification model...")
+_console = Console()
+_console.print("[grey50]Loading emotion model...[/]")
 sentiment_pipeline = pipeline(
     "text-classification",
     model="models/emotions",
     top_k=1,
 )
-print("Model ready.")
+_console.print("[green3]Model ready.[/]\n")
 
 
 
@@ -109,5 +111,5 @@ def export_to_csv(song):
                 lyric_line.compound,
             ])
 
-    print(f"\nCSV exported to {filename}")
+    _console.print(f"[grey50]CSV exported to {filename}[/]")
     return filename

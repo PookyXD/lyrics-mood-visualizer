@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from matplotlib.gridspec import GridSpec
+from rich.console import Console
 import numpy as np
 import os
 from config import (
@@ -257,5 +258,5 @@ def plot_mood_arc(song, art_path=None):
                 bbox_inches="tight", facecolor=BG)
     plt.close()
 
-    print(f"\nConstellation saved to {filename}")
+    Console().print(f"[grey50]Constellation saved to {filename}[/]")
     return filename
