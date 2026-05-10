@@ -1,8 +1,29 @@
 import re
 import csv
 import os
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from transformers import pipeline
 from src.models import LyricLine, Song
+
+print("Loading text-classification model...")
+sentiment_pipeline = pipeline(
+    "text-classification",
+    model="models/emotions",
+    top_k=1,
+)
+print("Model ready.")
+
+
+
+EMOTION_SCORES = {
+    "joy":      1.0,
+    "surprise": 0.5,
+    "neutral":  0.0,
+    "fear":    -0.4,
+    "sadness": -0.7,
+    "disgust": -0.8,
+    "anger":   -1.0,
+}
+
 
 def clean_lyrics(raw_lyrics):
     lines = raw_lyrics.split("\n")
@@ -16,6 +37,7 @@ def clean_lyrics(raw_lyrics):
 
     return cleaned
 
+
 def extract_sections(cleaned_lines):
     sections = []
     current_section = "Intro"
@@ -24,31 +46,48 @@ def extract_sections(cleaned_lines):
         if re.match(r'^\[.+\]$', line):
             current_section = line.strip("[]")
             continue
-
         sections.append((line, current_section))
-    
+
     return sections
 
-def analyze_lyrics(song_title, artist_name, raw_lyrics):
-    sia = SentimentIntensityAnalyzer()
 
-    cleaned = clean_lyrics(raw_lyrics)
+def score_to_compound(label, score):
+    base = EMOTION_SCORES.get(label.lower(), 0.0)
+    return round(base * score, 4)
+
+def analyze_lyrics(song_title, artist_name, raw_lyrics):
+    cleaned  = clean_lyrics(raw_lyrics)
     sections = extract_sections(cleaned)
 
     song = Song(song_title, artist_name)
 
-    for line, section in sections:
-        scores = sia.polarity_scores(line)
+    lines_text = [line for line, _ in sections]
+    labels_sec = [sec  for _, sec  in sections]
 
-        lyric_line = LyricLine(line, section)
-        lyric_line.positive = scores["pos"]
-        lyric_line.negative = scores["neg"]
-        lyric_line.neutral = scores["neu"]
-        lyric_line.compound = scores["compound"]
+    # run all lines through model in one batch
+    results = sentiment_pipeline(
+        lines_text,
+        truncation=True,
+        max_length=128,
+        batch_size=16,
+    )
+
+    for i, result in enumerate(results):
+        label    = result[0]["label"]
+        score    = result[0]["score"]
+        compound = score_to_compound(label, score)
+
+        lyric_line = LyricLine(lines_text[i], labels_sec[i])
+        lyric_line.emotion = label.lower()
+        lyric_line.compound  = compound
+        lyric_line.positive = score if label in ["joy", "surprise"] else 0.0
+        lyric_line.negative = score if label in ["anger", "sadness", "disgust", "fear"] else 0.0
+        lyric_line.neutral  = score if label == "neutral" else 0.0
 
         song.add_line(lyric_line)
 
     return song
+
 
 def export_to_csv(song):
     os.makedirs("output", exist_ok=True)
@@ -57,8 +96,8 @@ def export_to_csv(song):
 
     with open(filename, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-
-        writer.writerow(["line", "section", "positive", "negative", "neutral", "compound"])
+        writer.writerow(["line", "section", "positive",
+                         "negative", "neutral", "compound"])
 
         for lyric_line in song.lines:
             writer.writerow([
@@ -67,8 +106,8 @@ def export_to_csv(song):
                 lyric_line.positive,
                 lyric_line.negative,
                 lyric_line.neutral,
-                lyric_line.compound
+                lyric_line.compound,
             ])
-        
+
     print(f"\nCSV exported to {filename}")
     return filename

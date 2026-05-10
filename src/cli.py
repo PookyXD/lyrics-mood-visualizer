@@ -91,7 +91,8 @@ def print_table(song):
                      no_wrap=True, ratio=2)
     table.add_column("Score", no_wrap=True,
                      width=COL_SCORE_WIDTH, justify="right")
-
+    table.add_column("Emotion", style="bright_white",
+                         no_wrap=True, ratio=2)
     for lyric_line in song.lines:
         score = lyric_line.compound
 
@@ -105,6 +106,7 @@ def print_table(song):
         table.add_row(
             lyric_line.text[:60],
             lyric_line.section,
+            lyric_line.emotion,
             score_str,
         )
 

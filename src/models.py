@@ -2,6 +2,7 @@ class LyricLine:
     def __init__(self, text, section):
         self.text = text
         self.section = section
+        self.emotion = "neutral"
         self.positive = 0.0
         self.negative = 0.0
         self.neutral = 0.0
